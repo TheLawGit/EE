@@ -3,7 +3,8 @@
   hosts: all
   gather_facts: false
   collections:
-    - redhat_cop.ee_utilities
+#    - redhat_cop.ee_utilities
+    - infra.ee_utilities
   vars:
     # For controller configuration definition
     ee_reg_credential: Automation Hub Container Registry
@@ -22,12 +23,14 @@
         collections:
           - name: awx.awx
             version: 21.9.0
-          - name: redhat_cop.controller_configuration
-          - name: redhat_cop.ah_configuration
+#          - name: redhat_cop.controller_configuration
+          - name: infra.ee_utilities
+#          - name: redhat_cop.ah_configuration
+          - name: infra.ah_configuration
         prepend:
           - RUN whoami
           - RUN cat /etc/os-release
         append:
           - RUN echo This is a post-install command!
   roles:
-    - redhat_cop.ee_utilities.ee_builder
+    - infra.ee_utilities.ee_builder
