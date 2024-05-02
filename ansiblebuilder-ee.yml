@@ -1,0 +1,56 @@
+- name: Playbook to create custom EE
+  hosts: localhost
+  gather_facts: true
+  connection: local
+  vars:
+    # For controller configuration definition
+    ee_builder_dir_clean: false
+    ee_reg_credential: Automation Hub Container Registry
+    ee_base_image: registry.redhat.io/ansible-automation-platform-24/ee-minimal-rhel9:latest
+    ee_ah_host: 10.0.0.125
+    ah_token: ec28091dfebd9fb4c7ddc59d34cddb35350b71cb
+    ee_registry_dest: 10.0.0.125
+    ee_registry_username: admin
+    ee_registry_password: 11Di$tro
+    ee_verbosity: 3
+    ee_list:
+      - name: custom_ee
+        alt_name: Custom EE
+        dependencies:
+          system:
+            - python-requests
+            - python-pyyaml
+          python:
+            - pyvmomi
+          galaxy:
+            collections:
+              - name: redhat.sso
+                version: 2.0.0
+              - name: infra.controller_configuration
+              - name: infra.ah_configuration
+              - name: infra.ee_utilities
+              - name: awx.awx
+              - name: containers.podman
+              - name: community.general
+        build_steps:
+          prepend_final:
+            - RUN whoami
+            - RUN cat /etc/os-release
+          append_final:
+            - RUN echo This is a post-install command!
+
+  tasks:
+    - name: Install python3-dnf and Podman using command module
+      ansible.builtin.command: microdnf install -y python3-dnf podman
+      register: packages_installed
+      changed_when: packages_installed.rc == 0
+
+#    - name: Login to default registry
+#      containers.podman.podman_login:
+#        username: fediganc@enbridge.com
+#        password: ""
+#        registry: registry.redhat.io
+
+    - name: Run EE builder role
+      ansible.builtin.include_role:
+        name: infra.ee_utilities.ee_builder
