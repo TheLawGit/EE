@@ -22,7 +22,7 @@
           - awxkit  # For import and export modules
         collections:
           - name: awx.awx
-            version: 21.9.0
+            version: 22.4.0
 #          - name: redhat_cop.controller_configuration
           - name: infra.ee_utilities
 #          - name: redhat_cop.ah_configuration
